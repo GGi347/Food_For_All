@@ -56,8 +56,8 @@ class Restaurant(UserMixin, db.Model):
     weekends = db.Column(db.String(10))
     address_id = db.Column(db.Integer, db.ForeignKey('address.id'))
     available_seats = db.Column(db.Integer)
-    menu = db.relationship('Menu', backref='author', lazy='dynamic')
-    booking = db.relationship('Booking', backref='author', lazy='dynamic')
+    menu = db.relationship('Menu', backref='rest_menu', lazy='dynamic')
+    booking = db.relationship('Booking', backref='rest_booking', lazy='dynamic')
     '''def from_dict(self, data, new_user=False):
         for field in ['username', 'email', 'contact_number']:
             if field in data:
@@ -84,8 +84,8 @@ class Restaurant(UserMixin, db.Model):
     def order(self):
     	query = Restaurant.query.filter(Restaurant.points > 0).order_by(Restaurant.points.desc()).all()
     	a_list = []
-    	for q in range(2):
-    		data = {"id": query[q].id, "name": query[q].restaurantname, "cuisine": query[q].cuisine, "points": query[q].points}
+    	for q in range(0,1):
+    		data = {"id": query[0].id, "name": query[0].restaurantname, "cuisine": query[0].cuisine, "points": query[0].points}
     		datacopy = data.copy()
     		a_list.append(datacopy)
     	mydict = {}
@@ -99,7 +99,7 @@ class Address(UserMixin, db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	address_code = db.Column(db.Integer)
 	latitude = db.Column(db.String(5))
-	restaurants = db.relationship('Restaurant', backref='author', lazy='dynamic')
+	restaurants = db.relationship('Restaurant', backref='add_rest', lazy='dynamic')
 	name = db.Column(db.String(100), nullable=False)
 	longitude = db.Column(db.String(5))
       
@@ -124,7 +124,7 @@ class Item(UserMixin, db.Model):
 	#menu_category = db.Column(db.Integer, db.ForeignKey('menuCategory.id'))
 	menu_category = db.Column(db.String, nullable=False)
 	item = db.Column(db.String(100), nullable = False)
-	menu = db.relationship('Menu', backref='author', lazy='dynamic')
+	menu = db.relationship('Menu', backref='item_menu', lazy='dynamic')
 
 class Menu(UserMixin, db.Model):
 	id = db.Column(db.Integer, primary_key=True)

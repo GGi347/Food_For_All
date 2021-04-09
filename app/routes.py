@@ -63,7 +63,7 @@ def topRestaurants():
 	response.status_code = 201
 	return response'''
 	
-@app.route('/topRestaurants', methods=['GET'])   
+@app.route('/test', methods=['GET'])   
 def test():
 	restaurant = Restaurant()
 	query = restaurant.order()
