@@ -42,7 +42,7 @@ def get_users():
 def register():
 	data = request.get_json() or {}
 	if 'username' not in data or 'email' not in data or 'password' not in data or 'contact_number' not in data:
-		return "error: must include all data"
+		return 'Please fill all the fields correctly'
 	if User.query.filter_by(username=data['username']).first():
 		return 'please use a different username'
 	if User.query.filter_by(email=data['email']).first():
@@ -68,3 +68,31 @@ def test():
 	restaurant = Restaurant()
 	query = restaurant.order()
 	return query
+
+@app.route('/registerRest', methods=['GET', 'POST'])
+def registerRest():
+	data = request.get_json() or {}
+	if 'restaurantname' not in data or 'email' not in data or 'password' not in data or 'contact_number' not in data:
+		return 'Please fill all the fields correctly'
+	if Restaurant.query.filter_by(restaurantname=data['restaurantname']).first():
+		return 'Restaurant name is already registered'
+	if Restaurant.query.filter_by(email=data['email']).first():
+		return 'Please use a different email'
+	if Restaurant.query.filter_by(contact_number=data['contact_number']).first():
+		return 'Please use a different contact number'
+	restaurant = Restaurant()
+	restaurant.from_dict(data, new_user=True)
+	db.session.add(restaurant)
+	db.session.commit()
+	response = jsonify(restaurant.to_dict())
+	response.status_code = 201
+	response.headers['Location'] = url_for('get_user')
+	return response
+
+@app.route('/moreRestInfo/<int:id>', methods=['GET', 'POST'])
+def moreRestInfo(id):
+	if Restaurant.query.filter_by(id=id).first():
+		return 'No such restaurant'
+	rest = Restaurant()
+	response = jsonify(rest.to_dict_more_data())
+	return response
