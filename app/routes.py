@@ -1,7 +1,7 @@
 from app import app
 from app.models import User, db, Restaurant
 from flask_login import current_user, login_user
-from flask import request, jsonify, url_for, Response
+from flask import request, jsonify, url_for, Response, send_file
 from werkzeug.http import HTTP_STATUS_CODES
 
 
@@ -96,3 +96,7 @@ def moreRestInfo(id):
 	rest = Restaurant()
 	response = jsonify(rest.to_dict_more_data())
 	return response
+@app.route('/sendPhoto', methods=['GET', 'POST'])
+def sendPhoto():
+    return send_file('app/static/rest_logo/restaurant1.jpg', as_attachment=True)
+
