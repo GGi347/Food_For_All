@@ -53,7 +53,7 @@ def register():
 	db.session.commit()
 	response = jsonify(user.to_dict())
 	response.status_code = 201
-	response.headers['Location'] = url_for('get_user')
+	#response.headers['Location'] = url_for('get_user')
 	return response
 
 '''@app.route('/topRestaurants', methods=['GET'])
@@ -86,7 +86,7 @@ def registerRest():
 	db.session.commit()
 	response = jsonify(restaurant.to_dict())
 	response.status_code = 201
-	response.headers['Location'] = url_for('get_user')
+	#response.headers['Location'] = url_for('get_user')
 	return response
 
 @app.route('/moreRestInfo/<int:id>', methods=['GET', 'POST'])
