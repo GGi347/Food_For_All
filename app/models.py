@@ -54,7 +54,7 @@ class Restaurant(UserMixin, db.Model):
     cuisine = db.Column(db.String(45))
     weekdays = db.Column(db.String(10))
     weekends = db.Column(db.String(10))
-    about = db.Column(db.String(10))
+    about = db.Column(db.String(200))
     address_id = db.Column(db.Integer, db.ForeignKey('address.id'))
     available_seats = db.Column(db.Integer)
     menu = db.relationship('Menu', backref='rest_menu', lazy='dynamic')
