@@ -98,5 +98,5 @@ def moreRestInfo(id):
 	return response
 @app.route('/sendPhoto', methods=['GET', 'POST'])
 def sendPhoto():
-    return send_file('app/static/rest_logo/restaurant1.jpg', as_attachment=True)
+    return send_file('https://foodforallapp.herokuapp.com/app/static/rest_logo/restaurant1.jpg', as_attachment=True)
 
