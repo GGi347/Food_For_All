@@ -50,10 +50,11 @@ class Restaurant(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True, nullable = False)
     contact_number = db.Column(db.String(15))
     password_hash = db.Column(db.String(128), nullable = False)
-    points = db.Column(db.Integer, index=True, nullable=False)
+    points = db.Column(db.Integer, index=True)
     cuisine = db.Column(db.String(45))
     weekdays = db.Column(db.String(10))
     weekends = db.Column(db.String(10))
+    about = db.Column(db.String(10))
     address_id = db.Column(db.Integer, db.ForeignKey('address.id'))
     available_seats = db.Column(db.Integer)
     menu = db.relationship('Menu', backref='rest_menu', lazy='dynamic')
@@ -93,7 +94,7 @@ class Restaurant(UserMixin, db.Model):
     	return mydict
 
     def from_dict(self, data, new_user=False):
-        for field in ['username', 'email', 'contact_number']:
+        for field in ['restaurantname', 'email', 'contact_number', weekends, 'weekdays', 'cuisine', 'points', ]:
             if field in data:
                 setattr(self, field, data[field])
         if new_user and 'password' in data:
