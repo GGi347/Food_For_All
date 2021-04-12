@@ -59,32 +59,11 @@ class Restaurant(UserMixin, db.Model):
     available_seats = db.Column(db.Integer)
     menu = db.relationship('Menu', backref='rest_menu', lazy='dynamic')
     booking = db.relationship('Booking', backref='rest_booking', lazy='dynamic')
-    '''def from_dict(self, data, new_user=False):
-        for field in ['username', 'email', 'contact_number']:
-            if field in data:
-                setattr(self, field, data[field])
-        if new_user and 'password' in data:
-            self.set_password(data['password'])
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)'''
-
-    '''def to_dict(query):
-    	for 
-        data = {
-            'id': self.id,
-            'username': self.username,
-            
-        }
-        
-        return data'''
 
     def order(self):
-    	query = Restaurant.query.filter(Restaurant.points > 0).order_by(Restaurant.points.desc()).all()
+    	#query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
     	a_list = []
+    	query = Restaurant.query.all()
     	for q in range(0,1):
     		data = {"id": query[0].id, "name": query[0].restaurantname, "cuisine": query[0].cuisine, "points": query[0].points}
     		datacopy = data.copy()
