@@ -94,7 +94,7 @@ class Restaurant(UserMixin, db.Model):
     	return mydict
 
     def from_dict(self, data, new_user=False):
-        for field in ['restaurantname', 'email', 'contact_number', weekends, 'weekdays', 'cuisine', 'points', ]:
+        for field in ['restaurantname', 'email', 'contact_number', 'weekends', 'weekdays', 'cuisine', 'points', 'about']:
             if field in data:
                 setattr(self, field, data[field])
         if new_user and 'password' in data:
