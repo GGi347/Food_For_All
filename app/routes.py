@@ -3,7 +3,7 @@ from app.models import User, db, Restaurant
 from flask_login import current_user, login_user
 from flask import request, jsonify, url_for, Response, send_file
 from werkzeug.http import HTTP_STATUS_CODES
-
+import json
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -67,7 +67,7 @@ def topRestaurants():
 def test():
 	restaurant = Restaurant()
 	query = restaurant.order()
-	return query
+	return Response(json.dumps(query), mimetype="application/json")
 
 @app.route('/registerRest', methods=['GET', 'POST'])
 def registerRest():
@@ -96,6 +96,7 @@ def moreRestInfo(id):
 	rest = Restaurant()
 	response = jsonify(rest.to_dict_more_data())
 	return response
+	
 @app.route('/sendPhoto', methods=['GET', 'POST'])
 def sendPhoto():
     return send_file('static/rest_logo/restaurant1.jpg', as_attachment=True)

@@ -64,15 +64,14 @@ class Restaurant(UserMixin, db.Model):
     	#query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
     	a_list = []
     	query = Restaurant.query.all()
-    	i = query.len()
-    	for q in range(0,i):
+    	for q in range(0,1):
  
-    		data = {"id": query[i].id, "name": query[i].restaurantname, "cuisine": query[i].cuisine, "points": query[i].points}
+    		data = {"id": query[0].id, "name": query[0].restaurantname, "cuisine": query[0].cuisine, "points": query[0].points}
     		datacopy = data.copy()
     		a_list.append(datacopy)
     	mydict = {}
     	mydict["Restaurants"] = a_list
-    	return mydict
+    	return a_list
 
     def from_dict(self, data, new_user=False):
         for field in ['restaurantname', 'email', 'contact_number', 'weekends', 'weekdays', 'cuisine', 'points', 'about']:
