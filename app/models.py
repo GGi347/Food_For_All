@@ -61,17 +61,17 @@ class Restaurant(UserMixin, db.Model):
     booking = db.relationship('Booking', backref='rest_booking', lazy='dynamic')
 
     def order(self):
-    	#query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
-    	a_list = []
-    	query = Restaurant.query.all()
-    	for q in range(0,1):
+        #query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
+        a_list = []
+        query = Restaurant.query.all()
+        for q in range(0,1):
  
-    		data = {"id": query[0].id, "name": query[0].restaurantname, "cuisine": query[0].cuisine, "points": query[0].points}
-    		datacopy = data.copy()
-    		a_list.append(datacopy)
-    	mydict = {}
-    	mydict["Restaurants"] = a_list
-    	return a_list
+            data = {"id": query[0].id, "name": query[0].restaurantname, "cuisine": query[0].cuisine, "points": query[0].points}
+            datacopy = data.copy()
+            a_list.append(datacopy)
+        mydict = {}
+        mydict["Restaurants"] = a_list
+        return a_list
 
     def from_dict(self, data, new_user=False):
         for field in ['restaurantname', 'email', 'contact_number', 'weekends', 'weekdays', 'cuisine', 'points', 'about']:
@@ -87,10 +87,10 @@ class Restaurant(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def to_dict(self, include_email=False):
-    	data = { 'id' : self.id, 'restaurantname': self.restaurantname, 'cuisine': self.cuisine}
-    	if include_email:
-    		data['email'] = self.email
-    	return data
+        data = { 'id' : self.id, 'restaurantname': self.restaurantname, 'cuisine': self.cuisine}
+        if include_email:
+            data['email'] = self.email
+        return data
 
 
     def to_dict_more_data(self, include_email=False):
@@ -108,14 +108,14 @@ class Restaurant(UserMixin, db.Model):
 
 
     '''def __repr__(self):
-    	return '<Restaurant {}>'.format(self.restaurantname)'''
+        return '<Restaurant {}>'.format(self.restaurantname)'''
 class Address(UserMixin, db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	address_code = db.Column(db.Integer)
-	latitude = db.Column(db.String(5))
-	restaurants = db.relationship('Restaurant', backref='add_rest', lazy='dynamic')
-	name = db.Column(db.String(100), nullable=False)
-	longitude = db.Column(db.String(5))
+    id = db.Column(db.Integer, primary_key=True)
+    address_code = db.Column(db.Integer)
+    latitude = db.Column(db.String(5))
+    restaurants = db.relationship('Restaurant', backref='add_rest', lazy='dynamic')
+    name = db.Column(db.String(100), nullable=False)
+    longitude = db.Column(db.String(5))
       
 
 class Booking(UserMixin, db.Model):
@@ -129,23 +129,23 @@ class Booking(UserMixin, db.Model):
 
 
 '''class MenuCategory(UserMixin, db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	menu_category = db.Column(db.String(100),nullable=False)
-	items = db.relationship('Item', backref='author', lazy='dynamic')'''
+    id = db.Column(db.Integer, primary_key=True)
+    menu_category = db.Column(db.String(100),nullable=False)
+    items = db.relationship('Item', backref='author', lazy='dynamic')'''
 
 class Item(UserMixin, db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	#menu_category = db.Column(db.Integer, db.ForeignKey('menuCategory.id'))
-	menu_category = db.Column(db.String, nullable=False)
-	item = db.Column(db.String(100), nullable = False)
-	menu = db.relationship('Menu', backref='item_menu', lazy='dynamic')
+    id = db.Column(db.Integer, primary_key=True)
+    #menu_category = db.Column(db.Integer, db.ForeignKey('menuCategory.id'))
+    menu_category = db.Column(db.String, nullable=False)
+    item = db.Column(db.String(100), nullable = False)
+    menu = db.relationship('Menu', backref='item_menu', lazy='dynamic')
 
 class Menu(UserMixin, db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	restaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
-	item = db.Column(db.Integer, db.ForeignKey('item.id'))
-	price = db.Column(db.Integer, nullable=False)
-	availablility = db.Column(db.String(11))
+    id = db.Column(db.Integer, primary_key=True)
+    restaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
+    item = db.Column(db.Integer, db.ForeignKey('item.id'))
+    price = db.Column(db.Integer, nullable=False)
+    availablility = db.Column(db.String(11))
 
 class ngo(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -154,6 +154,7 @@ class ngo(UserMixin, db.Model):
     contact_number = db.Column(db.String(15))
     password_hash = db.Column(db.String(128), nullable = False)
     about = db.Column(db.String(300), nullable=False)
+    message = db.relationship('Message', backref='ngo_message', lazy='dynamic')
 
     def from_dict(self, data, new_user=False):
         for field in ['ngoName', 'email', 'contact_number', 'about']:
@@ -169,5 +170,25 @@ class ngo(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def to_dict(self):
-    	data = { 'id' : self.id, 'ngoName': self.ngoName, 'email': self.email, 'about': self.about}
-    	return data
+        data = { 'id' : self.id, 'ngoName': self.ngoName, 'email': self.email, 'about': self.about}
+        return data
+
+class Message(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender = db.Column(db.Integer, db.ForeignKey('ngo.id'))
+    receiver = db.Column(db.String(120), index=True, nullable=False)
+    messageType = db.Column(db.String(120), nullable=False)
+    message = db.Column(db.String(300), nullable=False)
+
+    def from_dict(self, data):
+        for field in ['sender', 'receiver', 'messageType', 'message']:
+            if field in data:
+                setattr(self, field, data[field])
+        
+
+
+    def to_dict(self):
+        data = { 'sender': self.sender, 'messageType': self.messageType, 'message': self.message}
+        return data 
+
+    

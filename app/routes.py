@@ -1,5 +1,5 @@
 from app import app
-from app.models import User, db, Restaurant, ngo
+from app.models import User, db, Restaurant, ngo, Message
 from flask_login import current_user, login_user
 from flask import request, jsonify, url_for, Response, send_file
 from werkzeug.http import HTTP_STATUS_CODES
@@ -111,11 +111,11 @@ def registerNgo():
 		return 'Please use a different email'
 	if ngo.query.filter_by(contact_number=data['contact_number']).first():
 		return 'Please use a different contact number'
-	ngo = ngo()
-	ngo.from_dict(data, new_user=True)
-	db.session.add(ngo)
+	user = ngo()
+	user.from_dict(data, new_user=True)
+	db.session.add(user)
 	db.session.commit()
-	response = jsonify(ngo.to_dict())
+	response = jsonify(user.to_dict())
 	response.status_code = 201
 	#response.headers['Location'] = url_for('get_user')
 	return response
@@ -128,11 +128,24 @@ def loginNgo():
 		mydict = {}
 		mydict["r"] = ngo.query.all()
 		return mydict
-	n = ngo.query.filter_by(email=data['email']).first()
-	if n is None or not n.check_password(data['password']):
+	user = ngo.query.filter_by(email=data['email']).first()
+	if user is None or not user.check_password(data['password']):
 		return "error: user not present"
 	else:
-		login_user(n)
-		response = jsonify(n.to_dict())
+		login_user(user)
+		response = jsonify(user.to_dict())
 		response.status_code = 201
 		return response
+
+@app.route('/sendMessage', methods=['GET', 'POST'])
+def sendMessage():
+	data = request.get_json() or {}
+	if 'sender' not in data or 'messageType' not in data or 'message' not in data or 'receiver' not in data:
+		return "Some data are missing"
+	else:
+		message = Message()
+		message.from_dict(data, new_user=True)
+		db.session.add(message)
+		db.session.commit()
+		response = jsonify(message.to_dict())
+		response.status_code = 201 
