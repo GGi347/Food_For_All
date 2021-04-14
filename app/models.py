@@ -168,8 +168,6 @@ class NGO(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def to_dict_more_data(self, include_email=False):
-    	data = { 'ngoName': self.ngoName, 'id': self.id}
-    	if include_email:
-    		data['email'] =  self.email
+    def to_dict(self):
+    	data = { 'id' : self.id, 'ngoName': self.ngoName, 'email': self.email, 'about': self.about}
     	return data

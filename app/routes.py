@@ -1,5 +1,5 @@
 from app import app
-from app.models import User, db, Restaurant
+from app.models import User, db, Restaurant, NGO
 from flask_login import current_user, login_user
 from flask import request, jsonify, url_for, Response, send_file
 from werkzeug.http import HTTP_STATUS_CODES
@@ -10,8 +10,7 @@ def login():
 	if current_user.is_authenticated:
 		return "welcome again"
 	data = request.get_json() or {}
-	print(data['email'])
-	print(data['password'])
+	
 	if 'email' not in data or 'password' not in data:
 		return 'error: must include all credentials'
 	user = User.query.filter_by(email=data['email']).first()
@@ -120,3 +119,18 @@ def registerNgo():
 	response.status_code = 201
 	#response.headers['Location'] = url_for('get_user')
 	return response
+@app.route('/loginNgo', methods=['GET', 'POST'])
+def loginNgo():
+	if current_user.is_authenticated:
+		return "welcome again"
+	data = request.get_json() or {}
+	if 'email' not in data or 'password' not in data:
+		return 'error: must include all credentials'
+	ngo = NGO.query.filter_by(email=data['email']).first()
+	if ngo is None or not ngo.check_password(data['password']):
+		return "error: user not present"
+	else:
+		login_user(ngo)
+		response = jsonify(ngo.to_dict())
+		response.status_code = 201
+		return response
