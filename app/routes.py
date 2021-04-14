@@ -129,7 +129,9 @@ def loginNgo():
 		mydict["r"] = ngo.query.all()
 		return mydict
 	user = ngo.query.filter_by(email=data['email']).first()
-	if user is None or not user.check_password(data['password']):
+	if user is None:
+		return "Error: Email not found"
+	if not user.check_password(data['password']):
 		return "error: user not present"
 	else:
 		login_user(user)
