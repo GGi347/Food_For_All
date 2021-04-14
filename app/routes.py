@@ -1,5 +1,5 @@
 from app import app
-from app.models import User, db, Restaurant, NGO
+from app.models import User, db, Restaurant, ngo
 from flask_login import current_user, login_user
 from flask import request, jsonify, url_for, Response, send_file
 from werkzeug.http import HTTP_STATUS_CODES
@@ -100,18 +100,18 @@ def moreRestInfo(id):
 def sendPhoto(id):
     return send_file('static/rest_logo/restaurant'+id+'.jpg', as_attachment=True)
 
-@app.route('/registerNgo', methods=['GET', 'POST'])
+@app.route('/registerngo', methods=['GET', 'POST'])
 def registerNgo():
 	data = request.get_json() or {}
 	if 'ngoName' not in data or 'email' not in data or 'password' not in data or 'contact_number' not in data:
 		return 'Please fill all the fields correctly'
-	if NGO.query.filter_by(ngoName=data['ngoName']).first():
-		return 'NGO name is already registered'
-	if NGO.query.filter_by(email=data['email']).first():
+	if ngo.query.filter_by(ngoName=data['ngoName']).first():
+		return 'ngo name is already registered'
+	if ngo.query.filter_by(email=data['email']).first():
 		return 'Please use a different email'
-	if NGO.query.filter_by(contact_number=data['contact_number']).first():
+	if ngo.query.filter_by(contact_number=data['contact_number']).first():
 		return 'Please use a different contact number'
-	ngo = NGO()
+	ngo = ngo()
 	ngo.from_dict(data, new_user=True)
 	db.session.add(ngo)
 	db.session.commit()
@@ -125,12 +125,14 @@ def loginNgo():
 		return "welcome again"
 	data = request.get_json() or {}
 	if 'email' not in data or 'password' not in data:
-		return 'error: must include all credentials'
-	ngo = NGO.query.filter_by(email=data['email']).first()
-	if ngo is None or not ngo.check_password(data['password']):
+		mydict = {}
+		mydict["r"] = ngo.query.all()
+		return mydict
+	n = ngo.query.filter_by(email=data['email']).first()
+	if n is None or not n.check_password(data['password']):
 		return "error: user not present"
 	else:
-		login_user(ngo)
-		response = jsonify(ngo.to_dict())
+		login_user(n)
+		response = jsonify(n.to_dict())
 		response.status_code = 201
 		return response

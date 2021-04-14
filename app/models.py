@@ -147,7 +147,7 @@ class Menu(UserMixin, db.Model):
 	price = db.Column(db.Integer, nullable=False)
 	availablility = db.Column(db.String(11))
 
-class NGO(UserMixin, db.Model):
+class ngo(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ngoName = db.Column(db.String(64), index=True, unique=True,nullable=False)
     email = db.Column(db.String(120), index=True, unique=True, nullable = False)
