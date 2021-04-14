@@ -105,7 +105,7 @@ def registerNgo():
 	data = request.get_json() or {}
 	if 'ngoName' not in data or 'email' not in data or 'password' not in data or 'contact_number' not in data:
 		return 'Please fill all the fields correctly'
-	if NGO.query.filter_by(restaurantname=data['ngoName']).first():
+	if NGO.query.filter_by(ngoName=data['ngoName']).first():
 		return 'NGO name is already registered'
 	if NGO.query.filter_by(email=data['email']).first():
 		return 'Please use a different email'
