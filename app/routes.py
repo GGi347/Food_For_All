@@ -97,7 +97,26 @@ def moreRestInfo(id):
 	response = jsonify(rest.to_dict_more_data())
 	return response
 	
-@app.route('/sendPhoto', methods=['GET', 'POST'])
-def sendPhoto():
-    return send_file('static/rest_logo/restaurant1.jpg', as_attachment=True)
+@app.route('/sendPhoto<int:id>', methods=['GET', 'POST'])
+def sendPhoto(id):
+    return send_file('static/rest_logo/restaurant'+id+'.jpg', as_attachment=True)
 
+@app.route('/registerNgo', methods=['GET', 'POST'])
+def registerNgo():
+	data = request.get_json() or {}
+	if 'ngoName' not in data or 'email' not in data or 'password' not in data or 'contact_number' not in data:
+		return 'Please fill all the fields correctly'
+	if NGO.query.filter_by(restaurantname=data['ngoName']).first():
+		return 'NGO name is already registered'
+	if NGO.query.filter_by(email=data['email']).first():
+		return 'Please use a different email'
+	if NGO.query.filter_by(contact_number=data['contact_number']).first():
+		return 'Please use a different contact number'
+	ngo = NGO()
+	ngo.from_dict(data, new_user=True)
+	db.session.add(ngo)
+	db.session.commit()
+	response = jsonify(ngo.to_dict())
+	response.status_code = 201
+	#response.headers['Location'] = url_for('get_user')
+	return response

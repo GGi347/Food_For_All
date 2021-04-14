@@ -147,6 +147,29 @@ class Menu(UserMixin, db.Model):
 	price = db.Column(db.Integer, nullable=False)
 	availablility = db.Column(db.String(11))
 
+class NGO(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ngoName = db.Column(db.String(64), index=True, unique=True,nullable=False)
+    email = db.Column(db.String(120), index=True, unique=True, nullable = False)
+    contact_number = db.Column(db.String(15))
+    password_hash = db.Column(db.String(128), nullable = False)
+    about = db.Column(db.String(300), nullable=False)
 
+    def from_dict(self, data, new_user=False):
+        for field in ['ngoName', 'email', 'contact_number', 'about']:
+            if field in data:
+                setattr(self, field, data[field])
+        if new_user and 'password' in data:
+            self.set_password(data['password'])
 
-   
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def to_dict_more_data(self, include_email=False):
+    	data = { 'ngoName': self.ngoName, 'id': self.id}
+    	if include_email:
+    		data['email'] =  self.email
+    	return data
