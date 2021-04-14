@@ -131,8 +131,8 @@ def loginNgo():
 	user = ngo.query.filter_by(email=data['email']).first()
 	if user is None:
 		return "Error: Email not found"
-	if not user.check_password(data['password']):
-		return "error: user not present"
+	if user.check_password(data['password']):
+		return "error: Email or password incorrect"
 	else:
 		login_user(user)
 		response = jsonify(user.to_dict())
