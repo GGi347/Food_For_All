@@ -149,3 +149,4 @@ def sendMessage():
 		db.session.commit()
 		response = jsonify(message.to_dict())
 		response.status_code = 201 
+		return response
