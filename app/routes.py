@@ -144,7 +144,7 @@ def sendMessage():
 		return "Some data are missing"
 	else:
 		message = Message()
-		message.from_dict(data, new_user=True)
+		message.from_dict(data)
 		db.session.add(message)
 		db.session.commit()
 		response = jsonify(message.to_dict())
