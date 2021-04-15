@@ -88,6 +88,23 @@ def registerRest():
 	#response.headers['Location'] = url_for('get_user')
 	return response
 
+@app.route('/loginRestaurant', methods=['GET', 'POST'])
+def loginRestaurant():
+	if current_user.is_authenticated:
+		return "welcome again"
+	data = request.get_json() or {}
+	
+	if 'email' not in data or 'password' not in data:
+		return 'error: must include all credentials'
+	user = Restaurant.query.filter_by(email=data['email']).first()
+	if user is None or not user.check_password(data['password']):		
+		return "error: user not present"
+	else:
+		login_user(user)
+		response = jsonify(user.to_dict())
+		response.status_code = 201
+		return response
+
 @app.route('/moreRestInfo/<int:id>', methods=['GET', 'POST'])
 def moreRestInfo(id):
 	if Restaurant.query.filter_by(id=id).first():
@@ -136,6 +153,13 @@ def loginNgo():
 		response = jsonify(user.to_dict())
 		response.status_code = 201
 		return response
+#get a list of ngos for donars to choose from
+@app.route('/getNgo', methods=['GET', 'POST'])
+def getNgo():
+	user = ngo()
+	query = user.all_ngo()
+	response.status_code = 201
+	return Response(json.dumps(query), mimetype="application/json")
 
 @app.route('/sendMessage', methods=['GET', 'POST'])
 def sendMessage():

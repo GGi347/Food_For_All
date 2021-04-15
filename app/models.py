@@ -88,7 +88,7 @@ class Restaurant(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def to_dict(self, include_email=False):
-        data = { 'id' : self.id, 'restaurantname': self.restaurantname, 'cuisine': self.cuisine}
+        data = { 'id' : self.id, 'restaurantname': self.restaurantname, 'cuisine': self.cuisine, 'points':self.points}
         if include_email:
             data['email'] = self.email
         return data
@@ -174,6 +174,17 @@ class ngo(UserMixin, db.Model):
         data = { 'id' : self.id, 'ngoName': self.ngoName, 'email': self.email, 'about': self.about}
         return data
 
+    def all_ngo(self):
+        #query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
+        a_list = []
+        query = ngo.query.all()
+        for q in range(0,1):
+ 
+            data = {"id": query[0].id, "ngoName": query[0].ngoName, "email": query[0].email, "about": query[0].about}
+            datacopy = data.copy()
+            a_list.append(datacopy)
+        return a_list
+
 class Message(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sender = db.Column(db.Integer, db.ForeignKey('ngo.id'))
@@ -209,6 +220,8 @@ class Donation(UserMixin, db.Model):
                 cur.execute('INSERT INTO Donation (donationDate) VALUES (%s)', (dt.now(),))
         
     def verify_donation(self, data):
+        #id is donation id
+        #donatedTo is ngo id
         for field in ['donatedTo', 'id']:
             if field in data:
                 self.donated = data['donated']
