@@ -188,7 +188,7 @@ class Message(UserMixin, db.Model):
 
 
     def to_dict(self):
-        data = { 'sender': self.sender, 'messageType': self.messageType, 'message': self.message}
+        data = { 'sender': self.sender, 'messageType': self.messageType}
         return data 
 
     
