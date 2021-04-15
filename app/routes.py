@@ -158,7 +158,6 @@ def loginNgo():
 def getNgo():
 	user = ngo()
 	query = user.all_ngo()
-	response.status_code = 201
 	return Response(json.dumps(query), mimetype="application/json")
 
 @app.route('/sendMessage', methods=['GET', 'POST'])
