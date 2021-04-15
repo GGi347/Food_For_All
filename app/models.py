@@ -5,6 +5,7 @@ from app import login
 from sqlalchemy import desc
 from flask import url_for
 from collections import defaultdict
+from datetime import datetime, timezone
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -188,7 +189,39 @@ class Message(UserMixin, db.Model):
 
 
     def to_dict(self):
-        data = { 'sender': self.sender, 'messageType': self.messageType, 'message': self.message}
+        data = { 'sender': self.sender, 'messageType': self.messageType}
         return data 
 
-    
+class Donation(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    donatedBy = db.Column(db.Integer, db.ForeignKey('user.id'), db.ForeignKey('restaurant.id'))
+    donatedTo = db.Column(db.Integer, db.ForeignKey('ngo.id')) 
+    donatedItems = db.Column(db.String(200))
+    donationRestaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
+    donated = db.Column(db.Boolean, unique=False, default=True)
+    donationDate = db.Column(db.DateTime)
+
+    def from_dict(self, data):
+        for field in ['donatedBy', 'donatedTo', 'donatedItems', 'donationRestaurant']:
+            if field in data:
+                setattr(self, field, data[field])
+                dt = datetime.now(timezone.utc)
+                cur.execute('INSERT INTO Donation (donationDate) VALUES (%s)', (dt.now(),))
+        
+    def verify_donation(self, data):
+        for field in ['donatedTo', 'id']:
+            if field in data:
+                self.donated = data['donated']
+                return "Success: Verified"
+            else:
+                return "Error: Not Verified"
+
+
+    def get_donation(self, data):
+        for field in ['donatedTo']:
+            if field in data:
+                send_data = {'donatedBy': self.donatedBy, 'donatedItems': self.donatedItems, 'donationDate':self.donationDate, 'donationRestaurant':self.donationRestaurant}
+                return send_data
+            else:
+                return "Error: Donation not found"
+

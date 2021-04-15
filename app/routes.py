@@ -1,5 +1,5 @@
 from app import app
-from app.models import User, db, Restaurant, ngo, Message
+from app.models import User, db, Restaurant, ngo, Message, Donation
 from flask_login import current_user, login_user
 from flask import request, jsonify, url_for, Response, send_file
 from werkzeug.http import HTTP_STATUS_CODES
@@ -141,11 +141,45 @@ def loginNgo():
 def sendMessage():
 	data = request.get_json() or {}
 	if 'sender' not in data or 'messageType' not in data or 'message' not in data or 'receiver' not in data:
-		return "Some data are missing"
+		message = Message()
+		response = jsonify(message.to_dict())
+		return response
 	else:
 		message = Message()
-		message.from_dict(data, new_user=True)
+		message.from_dict(data)
 		db.session.add(message)
 		db.session.commit()
 		response = jsonify(message.to_dict())
 		response.status_code = 201 
+		return response
+
+@app.route('/addDonation', methods=['GET', 'POST'])
+def addDonation():
+	data = request.get_json() or {}
+	if 'donatedBy' not in data or 'donatedTo' not in data or 'donatedItems' not in data or 'donationRestaurant' not in data:
+		return "Please Fill out all the fields"
+	else:
+		donation = Donation()
+		donation.from_dict(data)
+		db.session.add(donation)
+		db.session.commit()
+		response = "Donation has been added" 
+		return response
+
+@app.route('/getDonation', methods = ['GET', 'POST'])
+def getDonation():
+	data = request.get_json() or {}
+	donation = Donation()
+	response = jsonify(donation.get_donation(data))
+	response.status_code = 201
+	return response
+
+@app.route('/verifyDonation', methods = ['GET', 'POST'])
+def verifyDonation():
+	data = request.get_json() or {}
+	donation = Donation()
+	response = donation.verify_donation(data)
+	return response
+
+
+
