@@ -212,7 +212,7 @@ def addToItem():
 		return "Fill all the fields"
 	
 	if item.query.filter_by(item=data['item']).first():
-		return item.query.filter_by(id= data['id']).first()
+		return jsonify(item.query.filter_by(id= data['id']).first())
 	else:
 		item.from_dict(data)
 		db.session.add(item)
