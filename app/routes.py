@@ -1,5 +1,5 @@
 from app import app
-from app.models import User, db, Restaurant, ngo, Message, Donation
+from app.models import User, db, Restaurant, ngo, Message, Donation, Item, Menu
 from flask_login import current_user, login_user
 from flask import request, jsonify, url_for, Response, send_file
 from werkzeug.http import HTTP_STATUS_CODES
@@ -158,7 +158,6 @@ def loginNgo():
 def getNgo():
 	user = ngo()
 	query = user.all_ngo()
-	response.status_code = 201
 	return Response(json.dumps(query), mimetype="application/json")
 
 @app.route('/sendMessage', methods=['GET', 'POST'])
@@ -205,5 +204,35 @@ def verifyDonation():
 	response = donation.verify_donation(data)
 	return response
 
+@app.route('/addToItem', methods = ['GET', 'POST'])
+def addToItem():
+	data = request.get_json() or {}
+	item = Item()
+	if 'item' not in data or 'menu_category' not in data:
+		return "Fill all the fields"
+	
+	if item.query.filter_by(item=data['item']).first():
+		return item.query.filter_by(id= data['id']).first()
+	else:
+		item.from_dict(data)
+		db.session.add(item)
+		db.session.commit()
+		return jsonify(item.get_id(data))
+	
+@app.route('/addToMenu', methods = ['GET', 'POST'])
+def addToMenu():
+	data = request.get_json() or {}
+	menu = Menu()
+	if 'restaurant' not in data or 'item' not in data or 'availability' not in data or 'price' not in data:
+		return "Fill all the fields"
+	
+	if menu.query.filter_by(item=data['item']).all():
+		if menu.query.filter_by(restaurant=data['restaurant']).all():
+			return "Item already present in the menu"
+	else:
+		menu.from_dict(data)
+		db.session.add(menu)
+		db.session.commit()
+		return "Item Added To Menu"
 
 

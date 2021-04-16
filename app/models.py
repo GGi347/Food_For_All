@@ -141,12 +141,29 @@ class Item(UserMixin, db.Model):
     item = db.Column(db.String(100), nullable = False)
     menu = db.relationship('Menu', backref='item_menu', lazy='dynamic')
 
+    def get_id(self, data):
+        for field in ['item', 'menu_category']:
+            send_data = {'item_id': self.id}
+            return send_data
+
+    def from_dict(self, data):
+        for field in ['item', 'menu_category']:
+            if field in data:
+                setattr(self, field, data[field])
+                
+
 class Menu(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     restaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
     item = db.Column(db.Integer, db.ForeignKey('item.id'))
     price = db.Column(db.Integer, nullable=False)
     availablility = db.Column(db.String(11))
+
+    def from_dict(self, data):
+        for field in ['restaurant', 'item', 'price', 'availablility']:
+            if field in data:
+                setattr(self, field, data[field])
+            
 
 class ngo(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
