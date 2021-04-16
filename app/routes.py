@@ -208,8 +208,6 @@ def verifyDonation():
 def addToItem():
 	data = request.get_json() or {}
 	item = Item()
-	if 'item' not in data or 'menu_category' not in data:
-		return "Fill all the fields"
 	
 	if item.query.filter_by(item=data['item']).first():
 		return jsonify(item.query.filter_by(id= data['id']).first())
