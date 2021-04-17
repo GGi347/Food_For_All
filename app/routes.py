@@ -234,4 +234,31 @@ def addToMenu():
 		db.session.commit()
 		return "Item Added To Menu"
 
+@app.route('/getMenu', methods = ['GET', 'POST'])
+def getMenu():
+	data = request.get_json() or {}
+	menu = Menu()
+	query = []
+	rest_names =  menu.query.filter_by(restaurant=data['restaurant']).all()
+	if rest_names is not None:
+		for rest_name in rest_names:
+			send_data = {'id': rest_name.id, 'price': rest_name.price }
+			query.append(send_data)
+		return Response(json.dumps(query), mimetype="application/json")
+	else:
+		return jsonify({'error': "Menu Not Found"})
+
+@app.route('/getItem', methods = ['GET', 'POST'])
+def getItem():
+	data = request.get_json() or {}
+	item = Item()
+	query = []
+	ids = data['id']
+	for item_id in ids:
+		send_data = {'id': item_id, 'item': item_id.item, 'menu_category':item_id.menu_category}
+		query.append(send_data)
+		return Response(json.dumps(query), mimetype="application/json")
+	else:
+		return jsonify({'error': "Item not found"})
+
 
