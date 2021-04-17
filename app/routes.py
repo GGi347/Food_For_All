@@ -207,15 +207,15 @@ def verifyDonation():
 @app.route('/addToItem', methods = ['GET', 'POST'])
 def addToItem():
 	data = request.get_json() or {}
-	itm = Item()
+	item = Item()
 	
-	if itm.query.filter_by(itm=data['item']).first():
-		return jsonify(itm.query.filter_by(id= data['id']).first())
+	if item.query.filter_by(item=data['item']).first():
+		return jsonify(item.query.filter_by(id= data['id']).first())
 	else:
-		itm.from_dict(data)
-		db.session.add(itm)
+		item.from_dict(data)
+		db.session.add(item)
 		db.session.commit()
-		return jsonify(itm.get_id(data))
+		return jsonify(item.get_id(data))
 	
 @app.route('/addToMenu', methods = ['GET', 'POST'])
 def addToMenu():
