@@ -242,22 +242,20 @@ def getMenu():
 	rest_names =  menu.query.filter_by(restaurant=data['restaurant']).all()
 	if rest_names is not None:
 		for rest_name in rest_names:
-			send_data = {'id': rest_name.id, 'price': rest_name.price }
+			send_data = {'id': rest_name.item, 'price': rest_name.price }
 			query.append(send_data)
-		return Response(json.dumps(query), mimetype="application/json")
+		return getItem(query)
 	else:
 		return jsonify({'error': "Menu Not Found"})
 
-@app.route('/getItem', methods = ['GET', 'POST'])
-def getItem():
-	data = request.get_json() or {}
+def getItem(query):
 	item = Item()
-	query = []
-	ids = data['id']
-	for item_id in ids:
-		send_data = {'id': item_id, 'item': item_id.item, 'menu_category':item_id.menu_category}
-		query.append(send_data)
-		return Response(json.dumps(query), mimetype="application/json")
+	items = []
+	for data in query:
+		if item.query.filter_by(id=data['id']).all() is not None:
+			send_data = {'menu_category': item.menu_category, 'price': data['price']}
+			items.append(send_data)
+		return Response(json.dumps(items), mimetype="application/json")
 	else:
 		return jsonify({'error': "Item not found"})
 
