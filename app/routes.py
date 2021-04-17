@@ -252,8 +252,9 @@ def getItem(query):
 	item = Item()
 	items = []
 	for data in query:
-		if item.query.filter_by(id=data['id']).all() is not None:
-			send_data = {'menu_category': item.menu_category, 'price': data['price']}
+		q = item.query.filter_by(id=data['id']).first()
+		if q is not None:
+			send_data = {'menu_category': q.menu_category, 'price': data['price']}
 			items.append(send_data)
 		return Response(json.dumps(items), mimetype="application/json")
 	else:
