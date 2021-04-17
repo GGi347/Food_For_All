@@ -242,7 +242,7 @@ def getMenu():
 	rest_names =  menu.query.filter_by(restaurant=data['restaurant']).all()
 	if rest_names is not None:
 		for rest_name in rest_names:
-			send_data = {'id': rest_name.item, 'price': rest_name.price }
+			send_data = {'id': rest_name.item, 'price': rest_name.price, 'menu_id': rest_name.id}
 			query.append(send_data)
 		return getItem(query)
 	else:
@@ -254,9 +254,9 @@ def getItem(query):
 	for data in query:
 		q = item.query.filter_by(id=data['id']).first()
 		if q is not None:
-			send_data = {'menu_category': q.menu_category, 'price': data['price']}
+			send_data = {'menu_category': q.menu_category, 'price': data['price'], 'item': q.item, 'menu_id': data['menu_id'] }
 			items.append(send_data)
-		return Response(json.dumps(items), mimetype="application/json")
+	return Response(json.dumps(items), mimetype="application/json")
 	else:
 		return jsonify({'error': "Item not found"})
 
