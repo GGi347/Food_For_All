@@ -210,6 +210,7 @@ def addToItem():
 	item = Item()
 	
 	if item.query.filter_by(item=data['item']).first():
+		item.from_dict(data)
 		return jsonify(item.get_id(data))
 	else:
 		item.from_dict(data)
