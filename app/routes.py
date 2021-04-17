@@ -208,10 +208,9 @@ def verifyDonation():
 def addToItem():
 	data = request.get_json() or {}
 	item = Item()
-	
-	if item.query.filter_by(item=data['item']).first():
-		item.from_dict(data)
-		return jsonify(item.get_id(data))
+	item_name =  item.query.filter_by(item=data['item']).first()
+	if item_name is not None:
+		return jsonify(item_name.id)
 	else:
 		item.from_dict(data)
 		db.session.add(item)
