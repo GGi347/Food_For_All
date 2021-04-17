@@ -143,7 +143,7 @@ class Item(UserMixin, db.Model):
 
     def get_id(self, data):
         for field in ['item', 'menu_category']:
-            send_data = {'item_id': self.id}
+            send_data = {'id': self.id}
             return send_data
 
     def from_dict(self, data):
