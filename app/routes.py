@@ -257,7 +257,6 @@ def getItem(query):
 			send_data = {'menu_category': q.menu_category, 'price': data['price'], 'item': q.item, 'menu_id': data['menu_id'] }
 			items.append(send_data)
 	return Response(json.dumps(items), mimetype="application/json")
-	else:
-		return jsonify({'error': "Item not found"})
+	
 
 
