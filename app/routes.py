@@ -210,7 +210,7 @@ def addToItem():
 	item = Item()
 	
 	if item.query.filter_by(item=data['item']).first():
-		return jsonify(item.query.filter_by(id= data['id']).first())
+		return jsonify(item.get_id(data))
 	else:
 		item.from_dict(data)
 		db.session.add(item)
