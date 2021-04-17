@@ -210,7 +210,8 @@ def addToItem():
 	item = Item()
 	item_name =  item.query.filter_by(item=data['item']).first()
 	if item_name is not None:
-		return jsonify(item_name.id)
+		send_data = {'id': item_name.id}
+		return jsonify(send_data)
 	else:
 		item.from_dict(data)
 		db.session.add(item)
