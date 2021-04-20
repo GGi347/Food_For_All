@@ -8,14 +8,14 @@ import json
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if current_user.is_authenticated:
-		return "welcome again"
+		return jsonify({'welcome':"Welcome again"})
 	data = request.get_json() or {}
 	
 	if 'email' not in data or 'password' not in data:
-		return 'error: must include all credentials'
+		return jsonify({'error': "must include all credentials"})
 	user = User.query.filter_by(email=data['email']).first()
 	if user is None or not user.check_password(data['password']):		
-		return "error: user not present"
+		return jsonify({'error': "User not found"})
 	else:
 		login_user(user)
 		response = jsonify(user.to_dict())
@@ -41,11 +41,11 @@ def get_users():
 def register():
 	data = request.get_json() or {}
 	if 'username' not in data or 'email' not in data or 'password' not in data or 'contact_number' not in data:
-		return 'Please fill all the fields correctly'
+		return jsonify({'error': "Please fill all the fields correctly"})
 	if User.query.filter_by(username=data['username']).first():
-		return 'please use a different username'
+		return jsonify({'error':"Please use a different username"})
 	if User.query.filter_by(email=data['email']).first():
-		return 'please use a different email'
+		return jsonify({'error': "Please use a different email ID"})
 	user = User()
 	user.from_dict(data, new_user=True)
 	db.session.add(user)
@@ -72,13 +72,13 @@ def test():
 def registerRest():
 	data = request.get_json() or {}
 	if 'restaurantname' not in data or 'email' not in data or 'password' not in data or 'contact_number' not in data:
-		return 'Please fill all the fields correctly'
+		return jsonify({'error': "Must include all data"})
 	if Restaurant.query.filter_by(restaurantname=data['restaurantname']).first():
-		return 'Restaurant name is already registered'
+		return jsonify({'error': "Restaurant name is already registered"})
 	if Restaurant.query.filter_by(email=data['email']).first():
-		return 'Please use a different email'
+		return jsonify({'error': "Please use a different email ID"})
 	if Restaurant.query.filter_by(contact_number=data['contact_number']).first():
-		return 'Please use a different contact number'
+		return jsonify({'error': "Please use a different contact number"})
 	restaurant = Restaurant()
 	restaurant.from_dict(data, new_user=True)
 	db.session.add(restaurant)
@@ -91,14 +91,14 @@ def registerRest():
 @app.route('/loginRestaurant', methods=['GET', 'POST'])
 def loginRestaurant():
 	if current_user.is_authenticated:
-		return "welcome again"
+		return jsonify({'welcome': "Welcome again"})
 	data = request.get_json() or {}
 	
 	if 'email' not in data or 'password' not in data:
-		return 'error: must include all credentials'
+		return jsonify({'error': "Include all credentials"})
 	user = Restaurant.query.filter_by(email=data['email']).first()
 	if user is None or not user.check_password(data['password']):		
-		return "error: user not present"
+		return jsonify({'error': "User not found"})
 	else:
 		login_user(user)
 		response = jsonify(user.to_dict())
@@ -121,13 +121,13 @@ def sendPhoto(id):
 def registerNgo():
 	data = request.get_json() or {}
 	if 'ngoName' not in data or 'email' not in data or 'password' not in data or 'contact_number' not in data:
-		return 'Please fill all the fields correctly'
+		return jsonify({'error': "Fill all the fields"})
 	if ngo.query.filter_by(ngoName=data['ngoName']).first():
-		return 'ngo name is already registered'
+		return jsonify({'error': "NGO is already registered"})
 	if ngo.query.filter_by(email=data['email']).first():
-		return 'Please use a different email'
+		return jsonify({'error': "Please use a different email ID"})
 	if ngo.query.filter_by(contact_number=data['contact_number']).first():
-		return 'Please use a different contact number'
+		return jsonify({'error': "Please use a different contact number"})
 	user = ngo()
 	user.from_dict(data, new_user=True)
 	db.session.add(user)
@@ -139,7 +139,7 @@ def registerNgo():
 @app.route('/loginNgo', methods=['GET', 'POST'])
 def loginNgo():
 	if current_user.is_authenticated:
-		return "welcome again"
+		return jsonify({'Welcome':"Welcome again"})
 	data = request.get_json() or {}
 	if 'email' not in data or 'password' not in data:
 		mydict = {}
@@ -147,7 +147,7 @@ def loginNgo():
 		return mydict
 	user = ngo.query.filter_by(email=data['email']).first()
 	if user is None or not user.check_password(data['password']):
-		return "error: user not present"
+		return jsonify({'error': "User not found"})
 	else:
 		login_user(user)
 		response = jsonify(user.to_dict())
