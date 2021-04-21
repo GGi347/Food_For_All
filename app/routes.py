@@ -116,8 +116,8 @@ def moreRestInfo(id):
 @app.route('/sendPhoto', methods=['GET', 'POST'])
 def sendPhoto():
 	data = request.get_json() or {}
-    	return send_file('static/rest_logo/restaurant'+data['id']+'.jpg', as_attachment=True)
-
+	return send_file('static/rest_logo/restaurant'+data['id']+'.jpg', as_attachment=True)
+	
 @app.route('/registerngo', methods=['GET', 'POST'])
 def registerNgo():
 	data = request.get_json() or {}
