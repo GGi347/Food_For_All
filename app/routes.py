@@ -119,9 +119,9 @@ def sendPhoto():
 	if 'resId' not in data:
 		return send_file('static/rest_logo/restaurant1.jpg', as_attachment=True)
 	if data['resId'] == 3:
-		return send_file('static/rest_logo/restaurant3.jpeg', as_attachment=True)
+		return send_file('static/rest_logo/restaurant3.jpeg', as_attachment=True, mimetype='image/jpeg')
 	strid = str(data['resId'])
-	return send_file('static/rest_logo/restaurant'+strid+'.jpg', as_attachment=True)
+	return send_file('static/rest_logo/restaurant'+strid+'.jpg', as_attachment=True, mimetype='image/jpg')
 
 app.route('/sendPhotoTwo', methods=['GET', 'POST'])
 def sendPhotoTwo():
