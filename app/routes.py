@@ -113,9 +113,9 @@ def moreRestInfo(id):
 	response = jsonify(rest.to_dict_more_data())
 	return response
 	
-@app.route('/sendPhoto<int:id>', methods=['GET', 'POST'])
+@app.route('/sendPhoto', methods=['GET', 'POST'])
 def sendPhoto(id):
-    return send_file('static/rest_logo/restaurant'+id+'.jpg', as_attachment=True)
+    return send_file('static/rest_logo/restaurant'+data['id']+'.jpg', as_attachment=True)
 
 @app.route('/registerngo', methods=['GET', 'POST'])
 def registerNgo():
