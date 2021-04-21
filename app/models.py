@@ -65,9 +65,9 @@ class Restaurant(UserMixin, db.Model):
         #query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
         a_list = []
         query = Restaurant.query.all()
-        for q in range(0,1):
+        for q in query:
  
-            data = {"id": query[0].id, "name": query[0].restaurantname, "cuisine": query[0].cuisine, "points": query[0].points}
+            data = {"id": q.id, "name": q.restaurantname, "cuisine": q.cuisine, "points": q.points}
             datacopy = data.copy()
             a_list.append(datacopy)
         mydict = {}
