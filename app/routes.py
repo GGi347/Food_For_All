@@ -116,6 +116,8 @@ def moreRestInfo(id):
 @app.route('/sendPhoto', methods=['GET', 'POST'])
 def sendPhoto():
 	data = request.get_json() or {}
+	if 'id' not in data:
+		return send_file('static/rest_logo/restaurant1.jpg', as_attachment=True)
 	strid = str(data['id'])
 	return send_file('static/rest_logo/restaurant'+strid+'.jpg', as_attachment=True)
 	
