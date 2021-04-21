@@ -118,6 +118,8 @@ def sendPhoto():
 	data = request.get_json() or {}
 	if 'resId' not in data:
 		return send_file('static/rest_logo/restaurant1.jpg', as_attachment=True)
+	if data['resId'] == 3:
+		return send_file('static/rest_logo/restaurant'+strid+'.jpeg', as_attachment=True)
 	strid = str(data['resId'])
 	return send_file('static/rest_logo/restaurant'+strid+'.jpg', as_attachment=True)
 
