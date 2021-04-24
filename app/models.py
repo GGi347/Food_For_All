@@ -1,11 +1,24 @@
 from app import db
+import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from app import login
-from sqlalchemy import desc
+from sqlalchemy import desc, DateTime
 from flask import url_for
 from collections import defaultdict
 from datetime import datetime, timezone
+from sqlalchemy.sql import func
+
+class Admin(UserMixin, db.Model):
+    id = db.Column(db.Integer,  primary_key=True)
+    email = db.Column(db.String(120), index=True, unique=True, nullable = False)
+    password_hash = db.Column(db.String(128), nullable = False)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -14,6 +27,8 @@ class User(UserMixin, db.Model):
     contact_number = db.Column(db.String(15), nullable = False)
     password_hash = db.Column(db.String(128), nullable = False)
     booking = db.relationship('Booking', backref='author', lazy='dynamic')
+    user_order = db.relationship('UserOrder', backref='user_order', lazy='dynamic')
+    user_pref = db.relationship('UserPreference', backref='user_preference', lazy='dynamic')
 
     def from_dict(self, data, new_user=False):
         for field in ['username', 'email', 'contact_number']:
@@ -46,7 +61,7 @@ def load_user(id):
     return User.query.get(int(id))  
 
 class Restaurant(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer,  primary_key=True)
     restaurantname = db.Column(db.String(64), index=True, unique=True,nullable=False)
     email = db.Column(db.String(120), index=True, unique=True, nullable = False)
     contact_number = db.Column(db.String(15))
@@ -60,14 +75,28 @@ class Restaurant(UserMixin, db.Model):
     available_seats = db.Column(db.Integer)
     menu = db.relationship('Menu', backref='rest_menu', lazy='dynamic')
     booking = db.relationship('Booking', backref='rest_booking', lazy='dynamic')
+    rest_order = db.relationship('UserOrder', backref='rest_order', lazy='dynamic')
 
     def order(self):
         #query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
         a_list = []
         query = Restaurant.query.all()
-        for q in range(0,1):
+        for q in query:
  
-            data = {"id": query[0].id, "name": query[0].restaurantname, "cuisine": query[0].cuisine, "points": query[0].points}
+            data = {"id": q.id, "name": q.restaurantname, "cuisine": q.cuisine, "points": q.points}
+            datacopy = data.copy()
+            a_list.append(datacopy)
+        mydict = {}
+        mydict["Restaurants"] = a_list
+        return a_list
+
+    def searchOrder(self, result):
+        #query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
+        a_list = []
+    
+        for q in result:
+ 
+            data = {"id": q.id, "name": q.restaurantname, "cuisine": q.cuisine, "points": q.points}
             datacopy = data.copy()
             a_list.append(datacopy)
         mydict = {}
@@ -98,8 +127,8 @@ class Restaurant(UserMixin, db.Model):
         data = {
       
             'restaurantname': self.restaurantname,
-            'cuisine': self.cuisine
-            
+            'cuisine': self.cuisine,
+            'id': self.id
         }
         if include_email:
             data['email'] = self.email
@@ -143,7 +172,7 @@ class Item(UserMixin, db.Model):
 
     def get_id(self, data):
         for field in ['item', 'menu_category']:
-            send_data = {'item_id': self.id}
+            send_data = {'id': self.id}
             return send_data
 
     def from_dict(self, data):
@@ -157,16 +186,16 @@ class Menu(UserMixin, db.Model):
     restaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
     item = db.Column(db.Integer, db.ForeignKey('item.id'))
     price = db.Column(db.Integer, nullable=False)
-    availablility = db.Column(db.String(11))
+    discount_in_percent = db.Column(db.Integer)
 
     def from_dict(self, data):
-        for field in ['restaurant', 'item', 'price', 'availablility']:
+        for field in ['restaurant', 'item', 'price', 'availablility', 'discount_in_percent']:
             if field in data:
                 setattr(self, field, data[field])
             
 
 class ngo(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer,  primary_key=True)
     ngoName = db.Column(db.String(64), index=True, unique=True,nullable=False)
     email = db.Column(db.String(120), index=True, unique=True, nullable = False)
     contact_number = db.Column(db.String(15))
@@ -227,14 +256,13 @@ class Donation(UserMixin, db.Model):
     donatedItems = db.Column(db.String(200))
     donationRestaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
     donated = db.Column(db.Boolean, unique=False, default=True)
-    donationDate = db.Column(db.DateTime)
+    donationDate = db.Column(db.DateTime, default=datetime.now())
 
     def from_dict(self, data):
         for field in ['donatedBy', 'donatedTo', 'donatedItems', 'donationRestaurant']:
             if field in data:
                 setattr(self, field, data[field])
-                dt = datetime.now(timezone.utc)
-                cur.execute('INSERT INTO Donation (donationDate) VALUES (%s)', (dt.now(),))
+                
         
     def verify_donation(self, data):
         #id is donation id
@@ -255,3 +283,22 @@ class Donation(UserMixin, db.Model):
             else:
                 return "Error: Donation not found"
 
+class UserPreference(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    userID = db.Column(db.Integer, db.ForeignKey('user.id'))
+    cuisine = db.Column(db.Integer) 
+
+class UserOrder(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    userID = db.Column(db.Integer, db.ForeignKey('user.id'))
+    restID= db.Column(db.Integer, db.ForeignKey('restaurant.id'))
+    item = db.Column(db.String)
+
+    def from_dict(self, data):
+        for field in ['userID', 'restID', 'item']:
+            if field in data:
+                donationDate = db.Column(db.DateTime(timezone=True), default=datetime.datetime.now)
+                setattr(self, field, data[field])
+                dt = datetime.now(timezone.utc)
+                cur.execute('INSERT INTO Donation (donationDate) VALUES (%s)', (dt.now(),))
+    

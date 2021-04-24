@@ -1,0 +1,29 @@
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }} - admin</title>
+        {% else %}
+        <title>admin</title>
+        {% endif %}
+        <link rel= "stylesheet" type= "text/css" href= "../static/styles/design.css">
+    </head>
+    <body>
+        <div>
+            <a href="/editCustomer">Customer</a>
+            <a href="/editRestaurant">Restaurant</a>
+            <a href="/editNgo">Ngo</a>
+            <a href="/logoutadmin">Log Out</a>
+        </div>
+        <hr>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </body>
+</html>
