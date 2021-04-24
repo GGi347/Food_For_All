@@ -332,9 +332,9 @@ def getSearchResult():
             return Response(json.dumps(query), mimetype="application/json")
     else:
         query = restaurant.searchOrder(resultone)
-        return Response(json.dumps(query), mimetype="application/json"
+        return Response(json.dumps(query), mimetype="application/json")
     
-@app.route('/addOrder'), methods=['GET', 'POST'])
+@app.route('/addOrder', methods=['GET', 'POST'])
 def addOrder():
     data = request.get_json() or {}
     order = UserOrder()
