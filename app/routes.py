@@ -165,7 +165,7 @@ def moreRestInfo(id):
 def sendPhoto():
     data = request.get_json() or {}
     strid = str(data['id'])
-    return send_file('static/rest_logo/restaurant'+strid+'.jpg', as_attachment=True)
+    return send_file('static/rest_logo/restaurant'+strid+'.jpg', mimetype='image/gif', as_attachment=True)
 
 @app.route('/registerngo', methods=['GET', 'POST'])
 def registerNgo():
