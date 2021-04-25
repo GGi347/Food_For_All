@@ -26,6 +26,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True, nullable = False)
     contact_number = db.Column(db.String(15), nullable = False)
     password_hash = db.Column(db.String(128), nullable = False)
+    points = db.Column(db.Integer)
     booking = db.relationship('Booking', backref='author', lazy='dynamic')
     user_order = db.relationship('UserOrder', backref='user_order', lazy='dynamic')
     user_pref = db.relationship('UserPreference', backref='user_preference', lazy='dynamic')
@@ -37,6 +38,11 @@ class User(UserMixin, db.Model):
                 setattr(self, field, data[field])
         if new_user and 'password' in data:
             self.set_password(data['password'])
+
+    def edit_points(self, data):
+        for field in ['id']:
+            if field in data:
+                setattr(self, field, data[field])
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -321,12 +327,11 @@ class UserOrder(UserMixin, db.Model):
     userID = db.Column(db.Integer, db.ForeignKey('user.id'))
     restID= db.Column(db.Integer, db.ForeignKey('restaurant.id'))
     item = db.Column(db.String)
+    orderDate = db.Column(db.DateTime, default=datetime.now())
 
     def from_dict(self, data):
         for field in ['userID', 'restID', 'item']:
             if field in data:
-                donationDate = db.Column(db.DateTime(timezone=True), default=datetime.datetime.now)
                 setattr(self, field, data[field])
-                dt = datetime.now(timezone.utc)
-                cur.execute('INSERT INTO Donation (donationDate) VALUES (%s)', (dt.now(),))
+                
     

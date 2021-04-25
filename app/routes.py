@@ -360,3 +360,15 @@ def addAddress():
     #response.headers['Location'] = url_for('get_user')
     return response
 
+@app.route('/editPoints', methods=['GET', 'POST'])
+def editPoints():
+    data = request.get_json() or {}
+    user  = User()
+    user.edit_points(data)
+    db.session.add(user)
+    db.session.commit()
+    
+    response = jsonify({'message': 'points changed'})
+    response.status_code = 201
+    #response.headers['Location'] = url_for('get_user')
+    return response
