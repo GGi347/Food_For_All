@@ -1,5 +1,5 @@
 from app import app
-from app.models import User, db, Restaurant, ngo, Message, Donation, Item, Menu, UserOrder
+from app.models import User, db, Restaurant, ngo, Message, Donation, Item, Menu, UserOrder, Address
 from app.forms import LoginForm
 from flask_login import current_user, login_user
 from flask import request, jsonify, url_for, Response, send_file
@@ -347,4 +347,17 @@ def addOrder():
     db.session.commit()
     return "Order added"
 
+
+@app.route('/addAddress', methods=['GET', 'POST'])
+def addAddress():
+    data = request.get_json() or {}
+    address = Address()
+    address.from_dict(data)
+    db.session.add(address)
+    db.session.commit()
+    
+    response = jsonify(address.to_dict())
+    response.status_code = 201
+    #response.headers['Location'] = url_for('get_user')
+    return response
 

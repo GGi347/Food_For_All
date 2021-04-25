@@ -144,12 +144,20 @@ class Restaurant(UserMixin, db.Model):
 class Address(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     address_code = db.Column(db.Integer)
-    latitude = db.Column(db.String(5))
+    locality = db.Column(db.String)
+    sub_locality = db.Column(db.String)
     restaurants = db.relationship('Restaurant', backref='add_rest', lazy='dynamic')
-    name = db.Column(db.String(100), nullable=False)
-    longitude = db.Column(db.String(5))
-      
 
+    def from_dict(self, data):
+        for field in ['address_code', 'locality', 'sub_locality']:
+            if field in data:
+                setattr(self, field, data[field])
+
+
+    def to_dict(self):
+        data = { 'id' : self.id,  'address_code': self.address_code, 'locality': self.locality, 'sub_locality': self.sub_locality}
+        return data 
+          
 class Booking(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     bookedBy = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -158,7 +166,6 @@ class Booking(UserMixin, db.Model):
     num_of_seats = db.Column(db.Integer, nullable = False)
     restaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
     
-
 
 '''class MenuCategory(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
