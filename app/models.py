@@ -277,7 +277,12 @@ class Donation(UserMixin, db.Model):
     donatedTestaurant = db.relationship("Restaurant", foreign_keys=[donationRestaurant])
 
     def from_dict(self, data):
-        for field in ['donatedBy', 'donatedTo', 'donatedItems', 'donationRestaurant']:
+        for field in ['donatedByRest', 'donatedTo', 'donatedItems', 'donationRestaurant']:
+            if field in data:
+                setattr(self, field, data[field])
+
+    def from_dict_user(self, data):
+        for field in ['donatedByUser', 'donatedTo', 'donatedItems', 'donationRestaurant']:
             if field in data:
                 setattr(self, field, data[field])
                 
