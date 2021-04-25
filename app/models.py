@@ -80,7 +80,7 @@ class Restaurant(UserMixin, db.Model):
     def order(self):
         #query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
         a_list = []
-        query = Restaurant.query.all()
+        query = Restaurant.query.order_by(Restaurant.points.desc()).limit(5)
         for q in query:
  
             data = {"id": q.id, "name": q.restaurantname, "cuisine": q.cuisine, "points": q.points}
