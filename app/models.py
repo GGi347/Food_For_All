@@ -323,12 +323,11 @@ class UserOrder(UserMixin, db.Model):
     userID = db.Column(db.Integer, db.ForeignKey('user.id'))
     restID= db.Column(db.Integer, db.ForeignKey('restaurant.id'))
     item = db.Column(db.String)
+    orderDate = db.Column(db.DateTime, default=datetime.now())
 
     def from_dict(self, data):
         for field in ['userID', 'restID', 'item']:
             if field in data:
-                donationDate = db.Column(db.DateTime(timezone=True), default=datetime.datetime.now)
                 setattr(self, field, data[field])
-                dt = datetime.now(timezone.utc)
-                cur.execute('INSERT INTO Donation (donationDate) VALUES (%s)', (dt.now(),))
+                
     
