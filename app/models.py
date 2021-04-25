@@ -157,7 +157,7 @@ class Address(UserMixin, db.Model):
     def to_dict(self):
         data = { 'id' : self.id,  'address_code': self.address_code, 'locality': self.locality, 'sub_locality': self.sub_locality}
         return data 
-          
+
 class Booking(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     bookedBy = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -176,7 +176,7 @@ class Item(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     #menu_category = db.Column(db.Integer, db.ForeignKey('menuCategory.id'))
     menu_category = db.Column(db.String, nullable=False)
-    item = db.Column(db.String(100), nullable = False)
+    menu_item = db.Column(db.String(100), nullable = False)
     menu = db.relationship('Menu', backref='item_menu', lazy='dynamic')
 
     def get_id(self, data):

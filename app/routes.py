@@ -294,7 +294,7 @@ def getMenu():
     data = request.get_json() or {}
     menu = Menu()
     query = []
-    rest_names =  menu.query.filter_by(restaurant=data['restaurant']).all()
+    rest_names =  menu.query.filter_by(id = 3).all()
     if rest_names is not None:
         for rest_name in rest_names:
             send_data = {'id': rest_name.item, 'price': rest_name.price, 'discount_in_percent': rest_name.discount_in_percent }
@@ -308,7 +308,7 @@ def getItem(query):
     items = []
     for data in query:
         if item.query.filter_by(id=data['id']).all() is not None:
-            send_data = {'menu_category': item.menu_category, 'price': data['price']}
+            send_data = {'menu_category': item.menu_category, 'item': item.menu_item, 'id': data['id'], 'price': data['price']}
             items.append(send_data)
         return Response(json.dumps(items), mimetype="application/json")
     else:
