@@ -29,6 +29,7 @@ class User(UserMixin, db.Model):
     booking = db.relationship('Booking', backref='author', lazy='dynamic')
     user_order = db.relationship('UserOrder', backref='user_order', lazy='dynamic')
     user_pref = db.relationship('UserPreference', backref='user_preference', lazy='dynamic')
+    user_donation = db.relationship('Donation', backref='user_donation', lazy='dynamic')
 
     def from_dict(self, data, new_user=False):
         for field in ['username', 'email', 'contact_number']:
@@ -80,14 +81,12 @@ class Restaurant(UserMixin, db.Model):
     def order(self):
         #query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
         a_list = []
-        query = Restaurant.query.all()
+        query = Restaurant.query.order_by(Restaurant.points.desc()).limit(5)
         for q in query:
  
             data = {"id": q.id, "name": q.restaurantname, "cuisine": q.cuisine, "points": q.points}
             datacopy = data.copy()
             a_list.append(datacopy)
-        mydict = {}
-        mydict["Restaurants"] = a_list
         return a_list
 
     def searchOrder(self, result):
@@ -202,6 +201,7 @@ class ngo(UserMixin, db.Model):
     password_hash = db.Column(db.String(128), nullable = False)
     about = db.Column(db.String(300), nullable=False)
     message = db.relationship('Message', backref='ngo_message', lazy='dynamic')
+    ngo_donation = db.relationship('Donation', backref='ngo_donation', lazy='dynamic')
 
     def from_dict(self, data, new_user=False):
         for field in ['ngoName', 'email', 'contact_number', 'about']:
@@ -249,9 +249,20 @@ class Message(UserMixin, db.Model):
         data = { 'sender': self.sender, 'messageType': self.messageType}
         return data 
 
+    def order(self):
+        #query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
+        a_list = []
+        query = Message.query.all()
+        for q in query:
+ 
+            data = {"sender": q.sender, "messageType": q.messageType, "message": q.message}
+            datacopy = data.copy()
+            a_list.append(datacopy)
+        return a_list
+
 class Donation(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    donatedBy = db.Column(db.Integer, db.ForeignKey('user.id'), db.ForeignKey('restaurant.id'))
+    donatedByRest = db.Column(db.Integer)
     donatedTo = db.Column(db.Integer, db.ForeignKey('ngo.id')) 
     donatedItems = db.Column(db.String(200))
     donationRestaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
@@ -259,10 +270,14 @@ class Donation(UserMixin, db.Model):
     donationDate = db.Column(db.DateTime, default=datetime.now())
 
     def from_dict(self, data):
-        for field in ['donatedBy', 'donatedTo', 'donatedItems', 'donationRestaurant']:
+        for field in ['donatedByRest', 'donatedTo', 'donatedItems', 'donationRestaurant']:
             if field in data:
                 setattr(self, field, data[field])
-                
+
+    def from_dict_user(self, data):
+        for field in ['donatedByUser', 'donatedTo', 'donatedItems', 'donationRestaurant']:
+            if field in data:
+                setattr(self, field, data[field])
         
     def verify_donation(self, data):
         #id is donation id

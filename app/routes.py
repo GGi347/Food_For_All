@@ -165,7 +165,7 @@ def moreRestInfo(id):
 def sendPhoto():
     data = request.get_json() or {}
     strid = str(data['id'])
-    return send_file('static/rest_logo/restaurant'+strid+'.jpg', as_attachment=True)
+    return send_file('static/rest_logo/restaurant'+strid+'.jpg', mimetype='image/gif', as_attachment=True)
 
 @app.route('/registerngo', methods=['GET', 'POST'])
 def registerNgo():
@@ -229,15 +229,18 @@ def sendMessage():
 @app.route('/addDonation', methods=['GET', 'POST'])
 def addDonation():
     data = request.get_json() or {}
-    if 'donatedBy' not in data or 'donatedTo' not in data or 'donatedItems' not in data or 'donationRestaurant' not in data:
+    if 'donatedTo' not in data or 'donatedItems' not in data or 'donationRestaurant' not in data:
         return "Please Fill out all the fields"
-    else:
-        donation = Donation()
+    donation = Donation()
+    if 'donatedByUser' not in data:
         donation.from_dict(data)
-        db.session.add(donation)
-        db.session.commit()
-        response = "Donation has been added" 
-        return response
+    else:
+        donation.from_dict_user(data)
+        
+    db.session.add(donation)
+    db.session.commit()
+    response = "Donation has been added" 
+    return response
 
 @app.route('/getDonation', methods = ['GET', 'POST'])
 def getDonation():
@@ -313,8 +316,9 @@ def getItem(query):
 
 @app.route('/getMessage', methods=['GET', 'POST'])
 def getMessage():
-    data = request.get_json() or {}
     message = Message()
+    query = message.order()
+    return Response(json.dumps(query), mimetype="application/json")
     #query = user.()
     #return Response(json.dumps(query), mimetype="application/json")
 
