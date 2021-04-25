@@ -263,6 +263,7 @@ class Message(UserMixin, db.Model):
 class Donation(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     donatedByRest = db.Column(db.Integer)
+    donatedByUser = db.Column(db.Integer, db.ForeignKey('user.id'))
     donatedTo = db.Column(db.Integer, db.ForeignKey('ngo.id')) 
     donatedItems = db.Column(db.String(200))
     donationRestaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
