@@ -29,7 +29,7 @@ class User(UserMixin, db.Model):
     booking = db.relationship('Booking', backref='author', lazy='dynamic')
     user_order = db.relationship('UserOrder', backref='user_order', lazy='dynamic')
     user_pref = db.relationship('UserPreference', backref='user_preference', lazy='dynamic')
-    #user_donation = db.relationship('Donation', backref='user_donation', lazy='dynamic',  primaryjoin="User.id == Donation.donatedByUser")
+    user_donation = db.relationship('Donation', backref='user_donation', lazy='dynamic')
 
     def from_dict(self, data, new_user=False):
         for field in ['username', 'email', 'contact_number']:
@@ -265,7 +265,7 @@ class Message(UserMixin, db.Model):
 
 class Donation(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    donatedByUser = db.Column(db.Integer, db.ForeignKey('user.id'))
+    donatedByUser = db.Column(db.Integer)
     donatedByRest = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
     donatedTo = db.Column(db.Integer, db.ForeignKey('ngo.id')) 
     donatedItems = db.Column(db.String(200))
@@ -275,7 +275,6 @@ class Donation(UserMixin, db.Model):
     
     donated_by_rest = db.relationship("Restaurant", foreign_keys=[donatedByRest])
     donatedTestaurant = db.relationship("Restaurant", foreign_keys=[donationRestaurant])
-    donatedUser = db.relationship("User", foreign_keys=[donatedByUser])
 
     def from_dict(self, data):
         for field in ['donatedByRest', 'donatedTo', 'donatedItems', 'donationRestaurant']:
