@@ -314,8 +314,8 @@ def getItem(query):
 def getMessage():
     data = request.get_json() or {}
     message = Message()
-    #query = user.()
-    #return Response(json.dumps(query), mimetype="application/json")
+    query = message.order()
+    return Response(json.dumps(query), mimetype="application/json")
 
 @app.route('/getSearchResult', methods=['GET', 'POST'])
 def getSearchResult():
