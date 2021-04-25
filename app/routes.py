@@ -294,7 +294,7 @@ def getMenu():
     data = request.get_json() or {}
     menu = Menu()
     query = []
-    rest_names =  menu.query.filter_by(id = 3).all()
+    rest_names =  menu.query.filter_by(restaurant=data['restaurant']).all()
     if rest_names is not None:
         for rest_name in rest_names:
             send_data = {'id': rest_name.item, 'price': rest_name.price, 'discount_in_percent': rest_name.discount_in_percent }
@@ -307,12 +307,11 @@ def getItem(query):
     item = Item()
     items = []
     for data in query:
-        if item.query.filter_by(id=data['id']).all() is not None:
-            send_data = {'menu_category': item.menu_category, 'item': item.menu_item, 'id': data['id'], 'price': data['price']}
+        q = item.query.filter_by(id=data['id']).first()
+        if q is not None:
+            send_data = {'menu_category': q.menu_category, 'price': data['price'], 'item': q.menu_item, 'menu_id': data['menu_id'] }
             items.append(send_data)
-        return Response(json.dumps(items), mimetype="application/json")
-    else:
-        return jsonify({'error': "Item not found"})
+    return Response(json.dumps(items), mimetype="application/json")
 
 @app.route('/getMessage', methods=['GET', 'POST'])
 def getMessage():
