@@ -273,8 +273,8 @@ class Donation(UserMixin, db.Model):
     donated = db.Column(db.Boolean, unique=False, default=True)
     donationDate = db.Column(db.DateTime, default=datetime.now())
     
-    donated_by_user = relationship("User", foreign_keys=[donatedByUser])
-    donated_by_rest = relationship("Restaurant", foreign_keys=[donatedByRest])
+    donated_by_user = db.relationship("User", foreign_keys=[donatedByUser])
+    donated_by_rest = db.relationship("Restaurant", foreign_keys=[donatedByRest])
 
     def from_dict(self, data):
         for field in ['donatedBy', 'donatedTo', 'donatedItems', 'donationRestaurant']:
