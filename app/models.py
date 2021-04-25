@@ -247,7 +247,18 @@ class Message(UserMixin, db.Model):
 
     def to_dict(self):
         data = { 'sender': self.sender, 'messageType': self.messageType}
-        return data 
+        return data
+    
+    def order(self):
+        #query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
+        a_list = []
+        query = Message.query.all()
+        for q in query:
+ 
+            data = {"sender": q.sender, "messageType": q.messageType, "message": q.message}
+            datacopy = data.copy()
+            a_list.append(datacopy)
+        return a_list
 
 class Donation(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
