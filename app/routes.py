@@ -309,7 +309,7 @@ def getItem(query):
     for data in query:
         q = item.query.filter_by(id=data['id']).first()
         if q is not None:
-            send_data = {'menu_category': q.menu_category, 'price': data['price'], 'item': q.menu_item, 'menu_id': data['menu_id'] }
+            send_data = {'menu_category': q.menu_category, 'price': data['price'], 'item': q.menu_item, 'id': data['id'] }
             items.append(send_data)
     return Response(json.dumps(items), mimetype="application/json")
 
