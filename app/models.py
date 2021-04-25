@@ -29,7 +29,7 @@ class User(UserMixin, db.Model):
     booking = db.relationship('Booking', backref='author', lazy='dynamic')
     user_order = db.relationship('UserOrder', backref='user_order', lazy='dynamic')
     user_pref = db.relationship('UserPreference', backref='user_preference', lazy='dynamic')
-    user_donation = db.relationship('Donation', backref='user_donation', lazy='dynamic', foreign_keys = 'User.id')
+    user_donation = db.relationship('Donation', backref='user_donation', lazy='dynamic', foreign_keys = 'user.id')
 
     def from_dict(self, data, new_user=False):
         for field in ['username', 'email', 'contact_number']:
@@ -77,7 +77,7 @@ class Restaurant(UserMixin, db.Model):
     menu = db.relationship('Menu', backref='rest_menu', lazy='dynamic')
     booking = db.relationship('Booking', backref='rest_booking', lazy='dynamic')
     rest_order = db.relationship('UserOrder', backref='rest_order', lazy='dynamic')
-    rest_donation = db.relationship('Donation', backref='rest_donation', lazy='dynamic', foreign_keys = 'Restaurant.id')
+    rest_donation = db.relationship('Donation', backref='rest_donation', lazy='dynamic', foreign_keys = 'restaurant.id')
 
     def order(self):
         #query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
