@@ -76,7 +76,8 @@ class Restaurant(UserMixin, db.Model):
     available_seats = db.Column(db.Integer)
     menu = db.relationship('Menu', backref='rest_menu', lazy='dynamic')
     booking = db.relationship('Booking', backref='rest_booking', lazy='dynamic')
-    rest_order = db.relationship('UserOrder', backref='rest_order', lazy='dynamic')
+    #rest_order = db.relationship('UserOrder', backref='rest_order', lazy='dynamic')
+    #rest_donation = db.relationship('Donation', backref='rest_donation', lazy='dynamic', foreign_keys = 'Restaurant.id')
 
     def order(self):
         #query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
@@ -87,6 +88,8 @@ class Restaurant(UserMixin, db.Model):
             data = {"id": q.id, "name": q.restaurantname, "cuisine": q.cuisine, "points": q.points}
             datacopy = data.copy()
             a_list.append(datacopy)
+        mydict = {}
+        mydict["Restaurants"] = a_list
         return a_list
 
     def searchOrder(self, result):
@@ -247,8 +250,8 @@ class Message(UserMixin, db.Model):
 
     def to_dict(self):
         data = { 'sender': self.sender, 'messageType': self.messageType}
-        return data 
-
+        return data
+    
     def order(self):
         #query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
         a_list = []
@@ -262,12 +265,16 @@ class Message(UserMixin, db.Model):
 
 class Donation(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    donatedByRest = db.Column(db.Integer)
+    donatedByUser = db.Column(db.Integer, db.ForeignKey('user.id'))
+    donatedByRest = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
     donatedTo = db.Column(db.Integer, db.ForeignKey('ngo.id')) 
     donatedItems = db.Column(db.String(200))
     donationRestaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
     donated = db.Column(db.Boolean, unique=False, default=True)
     donationDate = db.Column(db.DateTime, default=datetime.now())
+    
+    donated_by_rest = db.relationship("Restaurant", foreign_keys=[donatedByRest])
+    donatedTestaurant = db.relationship("Restaurant", foreign_keys=[donationRestaurant])
 
     def from_dict(self, data):
         for field in ['donatedByRest', 'donatedTo', 'donatedItems', 'donationRestaurant']:
@@ -278,6 +285,7 @@ class Donation(UserMixin, db.Model):
         for field in ['donatedByUser', 'donatedTo', 'donatedItems', 'donationRestaurant']:
             if field in data:
                 setattr(self, field, data[field])
+                
         
     def verify_donation(self, data):
         #id is donation id
