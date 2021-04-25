@@ -89,11 +89,11 @@ def get_users():
 def register():
     data = request.get_json() or {}
     if 'username' not in data or 'email' not in data or 'password' not in data or 'contact_number' not in data:
-        return 'Please fill all the fields correctly'
+        return jsonify({'error': "User not found"})
     if User.query.filter_by(username=data['username']).first():
-        return 'please use a different username'
+        return jsonify({'error': "Use different username"})
     if User.query.filter_by(email=data['email']).first():
-        return 'please use a different email'
+        return jsonify({'error': "Use different contact_number"})
     user = User()
     user.from_dict(data, new_user=True)
     db.session.add(user)
@@ -120,13 +120,13 @@ def test():
 def registerRest():
     data = request.get_json() or {}
     if 'restaurantname' not in data or 'email' not in data or 'password' not in data or 'contact_number' not in data:
-        return 'Please fill all the fields correctly'
+        return jsonify({'error': "User not found"})
     if Restaurant.query.filter_by(restaurantname=data['restaurantname']).first():
-        return 'Restaurant name is already registered'
+        return jsonify({'error': 'Restaurant name is already registered'})
     if Restaurant.query.filter_by(email=data['email']).first():
-        return 'Please use a different email'
+        return jsonify({'error': "Use different email"})
     if Restaurant.query.filter_by(contact_number=data['contact_number']).first():
-        return 'Please use a different contact number'
+        return jsonify({'error': "Use different contact_number"})
     restaurant = Restaurant()
     restaurant.from_dict(data, new_user=True)
     db.session.add(restaurant)
@@ -156,7 +156,7 @@ def loginRestaurant():
 @app.route('/moreRestInfo/<int:id>', methods=['GET', 'POST'])
 def moreRestInfo(id):
     if Restaurant.query.filter_by(id=id).first():
-        return 'No such restaurant'
+        return jsonify({'error': "User not found"})
     rest = Restaurant()
     response = jsonify(rest.to_dict_more_data())
     return response
@@ -173,11 +173,11 @@ def registerNgo():
     if 'ngoName' not in data or 'email' not in data or 'password' not in data or 'contact_number' not in data:
         return 'Please fill all the fields correctly'
     if ngo.query.filter_by(ngoName=data['ngoName']).first():
-        return 'ngo name is already registered'
+        return jsonify({'error': "User already registered"})
     if ngo.query.filter_by(email=data['email']).first():
-        return 'Please use a different email'
+        return jsonify({'error': "Use different email"})
     if ngo.query.filter_by(contact_number=data['contact_number']).first():
-        return 'Please use a different contact number'
+        return jsonify({'error': "Use different contact_number"})
     user = ngo()
     user.from_dict(data, new_user=True)
     db.session.add(user)
@@ -262,7 +262,7 @@ def addToItem():
     data = request.get_json() or {}
     item = Item()
     if 'item' not in data or 'menu_category' not in data:
-        return "Fill all the fields"
+        return jsonify({'error': "Item not found"})
     item_name =  item.query.filter_by(item=data['item']).first()
     if item_name is not None:
         send_data = {'id': item_name.id}
@@ -294,7 +294,7 @@ def getMenu():
     data = request.get_json() or {}
     menu = Menu()
     query = []
-    rest_names =  menu.query.filter_by(id = 3).all()
+    rest_names =  menu.query.filter_by(restaurant=data['restaurant']).all()
     if rest_names is not None:
         for rest_name in rest_names:
             send_data = {'id': rest_name.item, 'price': rest_name.price, 'discount_in_percent': rest_name.discount_in_percent }
@@ -307,12 +307,11 @@ def getItem(query):
     item = Item()
     items = []
     for data in query:
-        if item.query.filter_by(id=data['id']).all() is not None:
-            send_data = {'menu_category': item.menu_category, 'item': item.menu_item, 'id': data['id'], 'price': data['price']}
+        q = item.query.filter_by(id=data['id']).first()
+        if q is not None:
+            send_data = {'menu_category': q.menu_category, 'price': data['price'], 'item': q.menu_item, 'id': data['id'] }
             items.append(send_data)
-        return Response(json.dumps(items), mimetype="application/json")
-    else:
-        return jsonify({'error': "Item not found"})
+    return Response(json.dumps(items), mimetype="application/json")
 
 @app.route('/getMessage', methods=['GET', 'POST'])
 def getMessage():

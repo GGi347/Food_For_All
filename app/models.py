@@ -77,7 +77,7 @@ class Restaurant(UserMixin, db.Model):
     menu = db.relationship('Menu', backref='rest_menu', lazy='dynamic')
     booking = db.relationship('Booking', backref='rest_booking', lazy='dynamic')
     #rest_order = db.relationship('UserOrder', backref='rest_order', lazy='dynamic')
-    #rest_donation = db.relationship('Donation', backref='rest_donation', lazy='dynamic', foreign_keys = 'Restaurant.id')
+    rest_donation = db.relationship('Donation', backref='rest_donation', lazy='dynamic')
 
     def order(self):
         #query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
@@ -276,12 +276,10 @@ class Donation(UserMixin, db.Model):
     donatedByRest = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
     donatedTo = db.Column(db.Integer, db.ForeignKey('ngo.id')) 
     donatedItems = db.Column(db.String(200))
-    donationRestaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
+    donationRestaurant = db.Column(db.Integer)
     donated = db.Column(db.Boolean, unique=False, default=True)
     donationDate = db.Column(db.DateTime, default=datetime.now())
     
-    donated_by_rest = db.relationship("Restaurant", foreign_keys=[donatedByRest])
-    donatedTestaurant = db.relationship("Restaurant", foreign_keys=[donationRestaurant])
 
     def from_dict(self, data):
         for field in ['donatedByRest', 'donatedTo', 'donatedItems', 'donationRestaurant']:
