@@ -76,7 +76,7 @@ class Restaurant(UserMixin, db.Model):
     available_seats = db.Column(db.Integer)
     menu = db.relationship('Menu', backref='rest_menu', lazy='dynamic')
     booking = db.relationship('Booking', backref='rest_booking', lazy='dynamic')
-    rest_order = db.relationship('UserOrder', backref='rest_order', lazy='dynamic')
+    #rest_order = db.relationship('UserOrder', backref='rest_order', lazy='dynamic')
     #rest_donation = db.relationship('Donation', backref='rest_donation', lazy='dynamic', foreign_keys = 'Restaurant.id')
 
     def order(self):
@@ -265,16 +265,15 @@ class Message(UserMixin, db.Model):
 
 class Donation(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    donatedByUser = db.Column(db.Integer, db.ForeignKey('User.id'))
-    donatedByRest = db.Column(db.Integer, db.ForeignKey('Restaurant.id'))
+    donatedBy = db.Column(db.Integer, db.ForeignKey('user.id'), db.ForeignKey('restaurant.id'))
     donatedTo = db.Column(db.Integer, db.ForeignKey('ngo.id')) 
     donatedItems = db.Column(db.String(200))
     donationRestaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
     donated = db.Column(db.Boolean, unique=False, default=True)
     donationDate = db.Column(db.DateTime, default=datetime.now())
     
-    donated_by_user = db.relationship("User", foreign_keys=[donatedByUser])
-    donated_by_rest = db.relationship("Restaurant", foreign_keys=[donatedByRest])
+    donated_by_rest = db.relationship("Restaurant", foreign_keys=[donatedBy])
+    donatedTestaurant = db.relationship("Restaurant", foreign_keys=[donationRestaurant])
 
     def from_dict(self, data):
         for field in ['donatedBy', 'donatedTo', 'donatedItems', 'donationRestaurant']:
