@@ -265,14 +265,15 @@ class Message(UserMixin, db.Model):
 
 class Donation(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    donatedBy = db.Column(db.Integer, db.ForeignKey('user.id'), db.ForeignKey('restaurant.id'))
+    donatedByUser = db.Column(db.Integer, db.ForeignKey('user.id'))
+    donatedByRest = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
     donatedTo = db.Column(db.Integer, db.ForeignKey('ngo.id')) 
     donatedItems = db.Column(db.String(200))
     donationRestaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
     donated = db.Column(db.Boolean, unique=False, default=True)
     donationDate = db.Column(db.DateTime, default=datetime.now())
     
-    donated_by_rest = db.relationship("Restaurant", foreign_keys=[donatedBy])
+    donated_by_rest = db.relationship("Restaurant", foreign_keys=[donatedByRest])
     donatedTestaurant = db.relationship("Restaurant", foreign_keys=[donationRestaurant])
 
     def from_dict(self, data):
