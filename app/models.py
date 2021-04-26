@@ -237,9 +237,9 @@ class ngo(UserMixin, db.Model):
         #query = Restaurant.query.filter(Restaurant.points >= -1).order_by(Restaurant.points.desc()).all()
         a_list = []
         query = ngo.query.all()
-        for q in range(0,1):
+        for q in query:
  
-            data = {"id": query[0].id, "ngoName": query[0].ngoName, "email": query[0].email, "about": query[0].about}
+            data = {"id": q.id, "ngoName": q.ngoName, "email": q.email, "about": q.about}
             datacopy = data.copy()
             a_list.append(datacopy)
         return a_list
