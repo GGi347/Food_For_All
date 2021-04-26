@@ -77,7 +77,6 @@ class Restaurant(UserMixin, db.Model):
     cuisine = db.Column(db.String(45))
     about = db.Column(db.String(200))
     address_id = db.Column(db.Integer, db.ForeignKey('address.id'))
-    available_seats = db.Column(db.Integer)
     menu = db.relationship('Menu', backref='rest_menu', lazy='dynamic')
     booking = db.relationship('Booking', backref='rest_booking', lazy='dynamic')
     #rest_order = db.relationship('UserOrder', backref='rest_order', lazy='dynamic')
