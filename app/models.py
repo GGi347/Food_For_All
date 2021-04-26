@@ -75,8 +75,6 @@ class Restaurant(UserMixin, db.Model):
     password_hash = db.Column(db.String(128), nullable = False)
     points = db.Column(db.Integer, index=True)
     cuisine = db.Column(db.String(45))
-    weekdays = db.Column(db.String(10))
-    weekends = db.Column(db.String(10))
     about = db.Column(db.String(200))
     address_id = db.Column(db.Integer, db.ForeignKey('address.id'))
     available_seats = db.Column(db.Integer)
@@ -112,7 +110,7 @@ class Restaurant(UserMixin, db.Model):
         return a_list
 
     def from_dict(self, data, new_user=False):
-        for field in ['restaurantname', 'email', 'contact_number', 'weekends', 'weekdays', 'cuisine', 'points', 'about']:
+        for field in ['restaurantname', 'email', 'contact_number', 'cuisine', 'points', 'about']:
             if field in data:
                 setattr(self, field, data[field])
         if new_user and 'password' in data:
@@ -168,7 +166,7 @@ class Booking(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     bookedBy = db.Column(db.Integer, db.ForeignKey('user.id'))
     bookedOn = db.Column(db.DateTime, nullable=False)
-    bookingOn = db.Column(db.DateTime, nullable=False)
+    bookingFor = db.Column(db.String(255))
     num_of_seats = db.Column(db.Integer, nullable = False)
     restaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
     
